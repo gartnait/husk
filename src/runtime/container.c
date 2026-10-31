@@ -1,3 +1,4 @@
+#include "common/result.h"
 #define _GNU_SOURCE
 
 #include "runtime/container.h"
@@ -49,7 +50,7 @@ static int child_main(void *arg) {
 
     husk_close(child_cfg->pipe_fd[0]);
 
-    if (container_setup(child_cfg->config) < 0) {
+    if (container_setup(child_cfg->config) != kResultOk) {
         return EXIT_FAILURE;
     }
 
@@ -96,7 +97,7 @@ int container_run(const container_config *config) {
 
     log_info("configuring user namespace");
 
-    if (user_namespace_setup(pid) < 0) {
+    if (user_namespace_setup(pid) != kResultOk) {
         husk_close(child_cfg.pipe_fd[1]);
         husk_waitpid(pid, NULL, 0);
         return EXIT_FAILURE;
